@@ -87,6 +87,56 @@ Any Python script or command can be run inside the managed environment using `uv
 uv run python your_script.py
 ```
 
+## Usage
+
+GrainSizeTools is a proper Python package and can be imported directly:
+
+```python
+import grain_size_tools as gst
+
+# or import submodules individually
+from grain_size_tools import summarize, plot, stereology, piezometers
+```
+
+### Describe a grain size population
+
+```python
+import numpy as np
+import grain_size_tools as gst
+
+# load your grain diameter data (in microns)
+data = np.loadtxt('my_data.txt')
+
+# print descriptive statistics with confidence intervals
+gst.summarize(data)
+
+# visualize the distribution
+fig, ax = gst.plot.distribution(data)
+```
+
+### Stereological correction (2D → 3D)
+
+```python
+# Saltykov method
+fig, axes = gst.stereology.Saltykov(data, numbins=12)
+
+# Two-step method (returns lognormal parameters)
+fig, ax = gst.stereology.two_step(data)
+```
+
+### Paleopiezometry
+
+```python
+# load the piezometric database
+version, metadata, db = gst.piezometers.load_piezometers_from_yaml(None)
+
+# list available piezometers
+gst.piezometers.list_piezometers(db)
+
+# estimate differential stress (MPa) from a grain size (microns)
+gst.piezometers.calc_diffstress(db.quartz.__dict__['Stipp_Tullis'], grain_size=40.0)
+```
+
 ## Documentation
 
 https://github.com/marcoalopez/GrainSizeTools/wiki

@@ -26,6 +26,7 @@
 # import neccesary Python scientific modules
 import numpy as np
 from scipy.stats import shapiro
+from . import averages
 
 
 def summarize(

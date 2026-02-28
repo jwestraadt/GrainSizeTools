@@ -430,10 +430,8 @@ def qq_plot(data, percent=2, **fig_kw):
     print(f'{W:0.2f}, {p_value:0.2f} (test statistic, p-value)')
     if p_value >= 0.05:
         print('It looks like a lognormal distribution')
-        print('(⌐■_■)')
     else:
         print('It doesnt look like a lognormal distribution (p-value < 0.05)')
-        print('(╯°□°）╯︵ ┻━┻')
     print('=======================================')
 
     return fig, ax

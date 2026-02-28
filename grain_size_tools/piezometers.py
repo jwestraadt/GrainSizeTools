@@ -24,8 +24,11 @@
 # ============================================================================ #
 
 import yaml
+from pathlib import Path
 from types import SimpleNamespace
 import numpy as np
+
+_DB_PATH = Path(__file__).parent / "piezometric_database.yaml"
 
 
 def calc_diffstress(piezometer, grain_size, correction=False):
@@ -150,8 +153,8 @@ def load_piezometers_from_yaml(filepath: str) -> tuple[str, SimpleNamespace]:
         SimpleNamespace dataclass with the piezometric relations
     """
 
-    # read YALM database
-    with open("piezometric_database.yaml", "r") as file:
+    # read YAML database
+    with open(_DB_PATH, "r") as file:
         database = yaml.safe_load(file)
 
     # get database version
@@ -178,7 +181,7 @@ if __name__ == "__main__":
     print("Welcome to the GrainSizetool piezometers module")
     print("===================================================")
 
-    version, metadata, database = load_piezometers_from_yaml("piezometric_database.yaml")
+    version, metadata, database = load_piezometers_from_yaml(_DB_PATH)
     print(f"Piezometric database v{version} loaded.")
     print("")
     print("To get or display piezometric properties use:")
