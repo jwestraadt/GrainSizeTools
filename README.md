@@ -42,9 +42,27 @@ https://github.com/marcoalopez/GrainSizeTools/releases
 
 ## Installation
 
+### Option A: Install from PyPI (recommended)
+
+```bash
+# core package only
+pip install grainsizetools-jwestraadt
+
+# with JupyterLab for running notebooks
+pip install "grainsizetools-jwestraadt[jupyter]"
+```
+
+Then launch JupyterLab:
+
+```bash
+jupyter lab
+```
+
+### Option B: Install from source using uv
+
 GrainSizeTools uses [uv](https://docs.astral.sh/uv/) for dependency and environment management.
 
-### 1. Install uv
+#### 1. Install uv
 
 ```bash
 # macOS / Linux
@@ -56,14 +74,14 @@ powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | ie
 
 Or via pip: `pip install uv`
 
-### 2. Clone the repository
+#### 2. Clone the repository
 
 ```bash
-git clone https://github.com/marcoalopez/GrainSizeTools.git
+git clone https://github.com/jwestraadt/GrainSizeTools.git
 cd GrainSizeTools
 ```
 
-### 3. Create the environment and install dependencies
+#### 3. Create the environment and install dependencies
 
 ```bash
 uv sync --all-groups
@@ -71,7 +89,7 @@ uv sync --all-groups
 
 This creates a `.venv` virtual environment with Python 3.11 and installs all dependencies (numpy, scipy, matplotlib, pandas, pyyaml) along with JupyterLab for running notebooks.
 
-### 4. Launch JupyterLab
+#### 4. Launch JupyterLab
 
 ```bash
 uv run jupyter lab
