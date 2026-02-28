@@ -5,9 +5,13 @@
 The method to describe the properties of the grain size population is named ``summarize()``. Before we get into the details of the method, let's run the GrainSizeTools script, load the example dataset, and create a toy dataset with known parameters.
 
 ```python
+import numpy as np
+import pandas as pd
+import grain_size_tools as gst
+
 # Load the example dataset
-filepath = 'C:/Users/marco/Documents/GitHub/GrainSizeTools/grain_size_tools/DATA/data_set.txt'
-dataset = pd.read_csv(filepath, sep='\t')
+url = 'https://raw.githubusercontent.com/marcoalopez/GrainSizeTools/master/grain_size_tools/DATA/data_set.txt'
+dataset = pd.read_table(url)
 
 # estimate equivalent circular diameters (ECDs)
 dataset['diameters'] = 2 * np.sqrt(dataset['Area'] / np.pi)
@@ -29,7 +33,7 @@ toy_dataset = np.random.lognormal(mean=scale, sigma=shape, size=500)
 We are now ready to check what we can get from the function `summarize()`. The simplest example of use would be to pass the data containing the diameters. For simplicity's sake, let's do it with the toy dataset first.
 
 ```python
-summarize(toy_dataset)
+gst.summarize(toy_dataset)
 ```
 
 ```
@@ -78,7 +82,7 @@ By default, the `summarize()` function returns:
 In the example above, the Shapiro-Wilk test tells us that the distribution is not normally distributed, which is to be expected since we know that this is a lognormal distribution. Note that the geometric mean and the lognormal shape are very close to the values used to generate the synthetic random dataset, 20 and 1.5 respectively. Now, let's do the same using the dataset that comes from a real rock, for this, we have to pass the column with the diameters:
 
 ```python
-summarize(dataset['diameters'])
+gst.summarize(dataset['diameters'])
 ```
 
 ```
@@ -167,9 +171,9 @@ def summarize(data,
 
     Examples
     --------
-    >>> summarize(dataset['diameters'])
-    >>> summarize(dataset['diameters'], ci_level=0.99)
-    >>> summarize(np.log(dataset['diameters']), avg=('amean', 'median', 'mode'))
+    >>> gst.summarize(dataset['diameters'])
+    >>> gst.summarize(dataset['diameters'], ci_level=0.99)
+    >>> gst.summarize(np.log(dataset['diameters']), avg=('amean', 'median', 'mode'))
 
     Returns
     -------

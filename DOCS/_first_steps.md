@@ -1,88 +1,112 @@
 # Getting started: first steps using the GrainSizeTools script
 
-Installing Python for data science
+Installing GrainSizeTools
 -------------
 
-GrainSizeTools script requires [Python](https://www.python.org/ ) 3.6 or higher and the Python scientific libraries [*NumPy*](http://www.numpy.org/ ) [*SciPy*](http://www.scipy.org/ ), [*Pandas*](http://pandas.pydata.org ) and [*Matplotlib*](http://matplotlib.org/ ). If you have no previous experience with Python, I recommend downloading and installing the [Anaconda Python distribution](https://docs.anaconda.com/free/anaconda/install/), as it includes all the required the scientific packages (> 5 GB disk space). In case you have a limited space in your hard disk, there is a distribution named [Miniconda](https://docs.conda.io/projects/miniconda/en/latest/) that only installs the Python packages you actually need. For both cases you have versions for Windows, MacOS and Linux.
+GrainSizeTools uses [uv](https://docs.astral.sh/uv/) for dependency and environment management. It requires Python 3.9 or higher.
 
-Anaconda Python Distribution: https://docs.anaconda.com/free/anaconda/install/
+### 1. Install uv
 
-Miniconda: https://docs.conda.io/projects/miniconda/en/latest/
+```bash
+# macOS / Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
 
-Once Anaconda is installed, launch the Anaconda Navigator and you will see that you have installed three different scientific-oriented integrated development systems (IDEs): **Spyder**, **JupyterLab**, and **Jupyter Notebook**. The GrainSizeTools documentation is written assuming that you will carry out the work in one of these IDEs (see next section).
+# Windows (PowerShell)
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+Or via pip: `pip install uv`
+
+### 2. Clone the repository
+
+```bash
+git clone https://github.com/marcoalopez/GrainSizeTools.git
+cd GrainSizeTools
+```
+
+### 3. Create the environment and install dependencies
+
+```bash
+uv sync --all-groups
+```
+
+This creates a `.venv` virtual environment with Python 3.11 and installs all dependencies (numpy, scipy, matplotlib, pandas, pyyaml) along with JupyterLab for running notebooks.
+
+### 4. Launch JupyterLab
+
+```bash
+uv run jupyter lab
+```
+
+Then open any of the template notebooks in `grain_size_tools/` or the examples in `DOCS/`.
 
 > [!IMPORTANT]
 > Scope: The GrainSizeTools script is not designed to deal with microscopic images but to analyse and visualize grain size populations and estimate stresses via paleopiezometers. **It is therefore necessary to measure the grain diameters or the sectional areas/volumes of the grains in advance and store them in a txt/csv/excel file**. For this task, we highly encourage you to use the [*ImageJ*](http://rsbweb.nih.gov/ij/) application or one of their different flavours (see [here](http://fiji.sc/ImageJ)). ImageJ-type applications are public-domain image processing programs widely used for scientific research that runs on Windows, macOS, and Linux platforms. The documentation contains a quick tutorial on how to measure the areas of the grain profiles with ImageJ, see *Table of Contents*. The combined use of **ImageJ** and **GrainSizeTools script** is intended to ensure that all data processing steps are done through free and open-source programs/scripts that run under any operating system. If you are dealing with EBSD data instead, we encourage you to use the [MTEX toolbox](https://mtex-toolbox.github.io/) for grain reconstruction (a tutorial on this will be available soon).
 
-## Open and running the script
+## Importing GrainSizeTools
 
-First of all, make sure you have the latest version of the GrainSizeTools (GST) script and open your IDE of choice. If you are not familiarized with Python, I propose two main options:
+GrainSizeTools is a proper Python package. In any Jupyter notebook or Python script, import it as follows:
 
-1. Use [Spyder](https://www.spyder-ide.org/) (Fig. 1), a MATLAB-like scientific IDE optimized for numerical computing and data analysis with Python. If you are familiar with MATLAB or Rstudio this is the easiest way to go.
+```python
+import numpy as np
+import pandas as pd
+import grain_size_tools as gst
+```
 
-2. Use [JupyterLab (or Jupyter Notebook)](https://jupyter.org/) (Fig. 2), an easy-to-use data science environment that allows you to create and share documents that may contain live code, equations, visualizations and narrative text. JupyterLab is just the next generation of the “classic” Jupyter Notebook so you can use either one interchangeably.
+After import, the following messages will appear in the console confirming each submodule was loaded:
 
-Make your choice and launch it from the Anaconda navigator or just by typing ``Spyder`` or ``jupyter lab`` in the terminal.
+```
+module averages imported
+module plot imported
+module stereology imported
+module template imported
+```
 
-![Figure 1. The Python editor and the shell in the Enthought Canopy environment](https://raw.githubusercontent.com/marcoalopez/GrainSizeTools/master/FIGURES/IDEs.png)  *Figure 1. The [Spyder](https://www.spyder-ide.org/) v.4+ integrated development environment (IDE) showing the editor (left), the IPython shell or console (bottom right), and the help-variable explorer window (top right). This is a MATLAB(RStudio)-like IDE for Python that provides a variable explorer, a history log, MATLAB-like cells, code auto-completion, etc.*
+All functionality is accessed through the `gst` namespace:
+
+```python
+gst.summarize(data)          # describe grain size population
+gst.plot.distribution(data)  # visualize distribution
+gst.stereology.Saltykov(data)  # stereological correction
+gst.piezometers.calc_diffstress(piezometer, grain_size=40.0)  # paleopiezometry
+```
+
+The documentation is written assuming you will work in **JupyterLab**. Ready-to-use template notebooks are provided in `grain_size_tools/` (see `grain_size_analysis_template.ipynb`, `stereology_analysis_template.ipynb`, and `paleopizometry_template.ipynb`).
 
 ![](https://github.com/marcoalopez/GrainSizeTools/blob/master/FIGURES/Jupyter_lab.png?raw=true)
 
-*Figure 2. The JupyterLab development environment is an interactive data science environment that allows creating documents mixing code, equations (using Latex), visualizations and narrative text*.
-
-In Spyder, open the ``GrainSizeTools_script.py`` file using ```File>Open``` and then run the script clicking on the "play" green icon in the toolbar (or go to ```Run>Run file``` in the menu bar). After running, the following text will appear in the console:
-
-```
-module plot imported
-module averages imported
-module stereology imported
-module piezometers imported
-module template imported
-
-======================================================================================
-Welcome to GrainSizeTools script
-======================================================================================
-A free open-source cross-platform script to visualize and characterize grain size
-population and estimate differential stress via paleopizometers.
-
-Version: v3.0RC0 (2020-04-23)
-Documentation: https://marcoalopez.github.io/GrainSizeTools/
-
-Type get.functions_list() to get a list of the main methods
-```
-
-Alternatively, if you are using **JupyterLab** or the **Notebook** you have a similar step-by-step tutorial in a notebook format within the ``example_notebook`` folder that comes with the script as well as [online](https://nbviewer.jupyter.org/github/marcoalopez/GrainSizeTools/blob/master/grain_size_tools/example_notebooks/getting_started.ipynb).
+*The JupyterLab development environment: an interactive data science environment for creating documents mixing code, equations, visualizations and narrative text.*
 
 
 
 ## Get information on the GrainSizeTools methods
 
-As indicated in the welcome message, we can get a list of the main methods by typing in the console:
+You can get a list of the main methods by typing in the console:
 
 ```python
-get.functions_list()
+gst.function_list()
 ```
 
 ![](https://raw.githubusercontent.com/marcoalopez/GrainSizeTools/master/FIGURES/function_list.png)
 
-The script is implemented around several modules. To access a method within a module you will have to type the name of the module and then, separated by a dot, the name of the method. For example to access the method ``qq_plot`` of the plot module you should write
+The package is organised around several submodules. To access a method within a submodule you write the package name, the submodule name and then the method name separated by dots. For example, to access the method ``qq_plot`` of the plot submodule:
 
 ```python
-plot.qq_plot()
+gst.plot.qq_plot()
 ```
 and provide the required parameters within the parenthesis.
 
-To access the methods within a module, type the module name plus the dot and hit the tab key and a complete list of methods will pop up.
+To explore the available methods within a submodule, type `gst.plot.` and hit the tab key — a complete list of methods will pop up.
 
 #### Get detailed information on methods
 
-You can get detailed information about any method or function of the script in different ways. The first is through the console using the character ? before the method
+You can get detailed information about any method or function using `?` after the method name:
 
 ```python
-conf_interval?
+gst.averages.conf_interval?
 ```
 
-Another option in Spyder is to get the information interactively without having to call it from the console. To do this, just hit Ctrl+I every time you write a method , all the information will automatically appear in the "Help" window.
+In JupyterLab you can also use `Shift+Tab` inside the function parentheses to display the docstring inline.
 
 ## Importing data using the Spyder data importer
 
@@ -173,15 +197,15 @@ which in plain language means that we are importing a (fictitious) ``csv`` file 
 
 > 👉 more details on Pandas csv read method: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_csv.html
 
-The script includes a method named ```get_filepath()``` to get the path of a file through a file selection dialog instead of directly writing it. This can be used in two ways:
+The package includes a method named ```gst.get_filepath()``` to get the path of a file through a file selection dialog instead of directly writing it. This can be used in two ways:
 
 ```python
 # store the path in a variable (here named filepath for convenience) and then use it when calling the read method
-filepath = get_filepath()
+filepath = gst.get_filepath()
 dataset = pd.read_csv(filepath, sep='\t')
 
-# use get_filepath() directly within the read method
-dataset = pd.read_csv(get_filepath(), sep='\t')
+# use gst.get_filepath() directly within the read method
+dataset = pd.read_csv(gst.get_filepath(), sep='\t')
 ```
 
 Lastly, Pandas also allows to directly import tabular data from the clipboard (i.e. data copied using copy-paste commands). For example, after copying the table from a text file, excel spreadsheet or a website using: 

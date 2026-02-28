@@ -1,5 +1,27 @@
-Getting Started: A step-by-step tutorial
+Getting Started: A step-by-step tutorial (Legacy v2.0 Docs)
 =============
+
+> [!WARNING]
+> **This tutorial applies to GrainSizeTools v2.0 only and is retained for historical reference.**
+> The API has changed significantly since v2.0. For the current version (v3.2+), please refer to the updated documentation:
+> - [Getting started](https://github.com/marcoalopez/GrainSizeTools/blob/master/DOCS/getting%20started_src.md)
+> - [Quantifying grain size populations](https://github.com/marcoalopez/GrainSizeTools/blob/master/DOCS/quantifying_grain_size_populations.md)
+> - [The plot module](https://github.com/marcoalopez/GrainSizeTools/blob/master/DOCS/_Plot_module.md)
+> - [Paleopiezometry](https://github.com/marcoalopez/GrainSizeTools/blob/master/DOCS/_Paleopizometry.md)
+> - [The stereology module](https://github.com/marcoalopez/GrainSizeTools/blob/master/DOCS/stereology_module.md)
+>
+> Key API changes in v3.2+:
+> - Import: `import grain_size_tools as gst` (instead of `%run GrainSizeTools_script.py`)
+> - `extract_column()` → use Pandas: `pd.read_table(url)` then `dataset['column']`
+> - `calc_grain_size()` → `gst.summarize()` + `gst.plot.distribution()`
+> - `calc_shape()` → `gst.stereology.two_step()`
+> - `Saltykov()` → `gst.stereology.Saltykov()`
+> - `test_lognorm()` → `gst.plot.qq_plot()`
+> - `quartz()` / `olivine()` etc. → `gst.piezometers.load_piezometers_from_yaml(None)` then `gst.piezometers.list_piezometers(db)`
+> - `calc_diffstress(grain_size, phase, piezometer)` → `gst.piezometers.calc_diffstress(db.phase.__dict__['piezometer'], grain_size=value)`
+> - `confidence_interval()` → `gst.averages.conf_interval()`
+
+---
 
 > **IMPORTANT NOTE: This documentation only applies to GrainSizeTools v2.0+ Please check your script version before using this tutorial. You will be able to reproduce all the results shown in this tutorial using the dataset provided with the script, the file ``data_set.txt``**
 

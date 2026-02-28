@@ -25,44 +25,40 @@ In the next subsection, we will show examples of how to obtain information about
 
 Table 1 provides a list of the all piezometric relations currently available in the GrainSizeTools script with features (the type of average to use and the DRX mechanism) and references. The experimentally-derived parameters are provided in Tables 2 to 5.
 
-Besides, you can get information interactively on the different available piezometric relations from the console just by typing ``piezometers.*()``, where * is the mineral phase, either ``quartz``, ``calcite``, ``olivine``, or ``feldspar``. For example:
+You can also get information interactively from the console. First, load the piezometric database:
 
 ```python
-piezometers.quartz()
+import grain_size_tools as gst
+
+# load the piezometric database (pass None to use the built-in database)
+version, metadata, db = gst.piezometers.load_piezometers_from_yaml(None)
+```
+
+Then list all available piezometers:
+
+```python
+gst.piezometers.list_piezometers(db)
 ```
 
 ```
 Available piezometers:
-'Cross'
-'Cross_hr'
-'Holyoke'
-'Holyoke_BLG'
-'Shimizu'
-'Stipp_Tullis'
-'Stipp_Tullis_BLG'
-'Twiss'
+Phase: quartz
+  Cross, Cross_hr, Holyoke, Holyoke_BLG, Shimizu, Stipp_Tullis, Stipp_Tullis_BLG, Twiss
+Phase: olivine
+  Jung_Karato, VanderWal_wet, Tasaka
+Phase: calcite
+  Barnhoorn, Platt_Bresser, Rutter_SGR, Rutter_GBM, Schmid, Valcke
+Phase: feldspar
+  Post_Tullis_BLG
 ```
 
-If you want to get the details of a particular piezometric relationship you can do so as follows. Remember that the relationship between recrystallized grain size and differential stress is ![](https://render.githubusercontent.com/render/math?math=\sigma_d=Bg^{-m}) where ![](https://render.githubusercontent.com/render/math?math=\sigma_d) and ![](https://render.githubusercontent.com/render/math?math=g) are the differential stress and the average grain size respectively.
+If you want to get the details of a particular piezometric relationship you can do so as follows. Remember that the relationship between recrystallized grain size and differential stress is σ_d = B · g^(-m) where σ_d and g are the differential stress and the average grain size respectively.
 
 ```python
-piezometers.quartz('Twiss')
+gst.piezometers.summary(db.quartz.__dict__['Twiss'])
 ```
 
-```
-(550,
- 0.68,
- 'Ensure that you entered the apparent grain size as the arithmetic mean grain size',
- True,
- 1.5)
-```
-
-Note the five different outputs separated by commas which correspond with:
-- the constant *B* of the piezometric relation
-- the exponent *m* of the piezometric relation
-- A warning indicating the average to use with this piezometric relation
-- An indication of whether the piezometric relation was calibrated using linear intercepts (if ``False`` the piezometric relation was calibrated using equivalent circular diameters.
-- The stereological correction factor used (if applicable). If ``False``, no stereological correction applies.
+This displays the parameters (B, m), the required average type, whether linear intercept conversion is applied, and any stereological correction factor.
 
 
 
@@ -145,72 +141,14 @@ Note the five different outputs separated by commas which correspond with:
 
 ## Estimate differential stress using the ``calc_diffstress()`` function
 
-Let us first look at the documentation of the ``calc_diffstress()`` method:
+The ``calc_diffstress()`` function requires two inputs: (1) the piezometer dictionary (obtained from the loaded database) and (2) the average grain size in microns. An optional `correction` parameter applies a plane-stress correction (Paterson and Olgaard, 2000).
 
 ```python
-def calc_diffstress(grain_size, phase, piezometer, correction=False):
-    """ Apply different piezometric relations to estimate the differential
-    stress from average apparent grain sizes. The piezometric relation has
-    the following general form:
+# load the database first (if not already loaded)
+version, metadata, db = gst.piezometers.load_piezometers_from_yaml(None)
 
-    df = B * grain_size**-m
-
-    where df is the differential stress in [MPa], B is an experimentally
-    derived parameter in [MPa micron**m], grain_size is the aparent grain
-    size in [microns], and m is an experimentally derived exponent.
-
-    Parameters
-    ----------
-    grain_size : positive scalar or array-like
-        the apparent grain size in microns
-
-    phase : string {'quartz', 'olivine', 'calcite', or 'feldspar'}
-        the mineral phase
-
-    piezometer : string
-        the piezometric relation
-
-    correction : bool, default False
-        correct the stress values for plane stress (Paterson and Olgaard, 2000)
-
-     References
-    -----------
-    Paterson and Olgaard (2000) https://doi.org/10.1016/S0191-8141(00)00042-0
-    de Hoff and Rhines (1968) Quantitative Microscopy. Mcgraw-Hill. New York.
-
-    Call functions
-    --------------
-    piezometers.quartz
-    piezometers.olivine
-    piezometers.calcite
-    piezometers.albite
-
-    Assumptions
-    -----------
-    - Independence of temperature (excepting Shimizu piezometer), total strain,
-    flow stress, and water content.
-    - Recrystallized grains are equidimensional or close to equidimensional when
-    using a single section.
-    - The piezometer relations requires entering the grain size as "average"
-    apparent grain size values calculated using equivalent circular diameters
-    (ECD) with no stereological correction. See documentation for more details.
-    - When required, the grain size value will be converted from ECD to linear
-    intercept (LI) using a correction factor based on de Hoff and Rhines (1968):
-    LI = (correction factor / sqrt(4/pi)) * ECD
-    - Stress estimates can be corrected from uniaxial compression (experiments)
-    to plane strain (nature) multiplying the paleopiezometer by 2/sqrt(3)
-    (Paterson and Olgaard, 2000)
-
-    Returns
-    -------
-    The differential stress in MPa (a float)
-    """
-```
-
-As indicated in the documentation, the ``calc_diffstress()`` requires three (obligatory) inputs: (1) the average grain size in microns, (2) the mineral phase, and (3) the piezometric relation to use. We provide a few examples below:
-
-```python
-calc_diffstress(12, phase='quartz', piezometer='Twiss')
+# estimate differential stress using the Twiss (1977) quartz piezometer
+gst.piezometers.calc_diffstress(db.quartz.__dict__['Twiss'], grain_size=12)
 ```
 
 ```
@@ -223,11 +161,11 @@ ECD was converted to linear intercepts using de Hoff and Rhines (1968) correctio
 ===========================================================================
 ```
 
-The function returns the differential stress (in MPa) plus some relevant information about the corrections made and the type of average expected. Most piezometric calibrations were calibrated using uniaxial compression deformation experiments while in nature most shear zones approximately behaves as plane stress. Due to this, it may be necessary to correct the differential stress value. The ``calc_diffstress()`` allows you to apply the correction proposed by Paterson and Olgaard (2000) for this as follows (note the slightly different value of differential stress):
+The function returns the differential stress (in MPa) plus some relevant information about the corrections made and the type of average expected. Most piezometric calibrations were performed in uniaxial compression while natural shear zones approximately behave as plane stress. The ``calc_diffstress()`` allows you to apply the correction proposed by Paterson and Olgaard (2000) as follows:
 
 ```python
 # Apply the same piezometric relation but correct the estimate for plane stress
-calc_diffstress(12, phase='quartz', piezometer='Twiss', correction=True)
+gst.piezometers.calc_diffstress(db.quartz.__dict__['Twiss'], grain_size=12, correction=True)
 ```
 
 ```
@@ -240,34 +178,33 @@ ECD was converted to linear intercepts using de Hoff and Rhines (1968) correctio
 ============================================================================
 ```
 
-Note that the stress estimate is a bit different compare to the value without the correction.
-
-Some paleopiezometers require uncommon averages such as the root mean square or RMS, for example:
+Some paleopiezometers require the root mean square (RMS) average. Check which average a piezometer requires using:
 
 ```python
-piezometers.quartz('Stipp_Tullis')
-
-(669.0,
- 0.79,
- 'Ensure that you entered the apparent grain size as the root mean square (RMS)',
- False,
- False)
+gst.piezometers.summary(db.quartz.__dict__['Stipp_Tullis'])
 ```
 
 In this case you should estimate the RMS as
 
-![](https://render.githubusercontent.com/render/math?math=RMS=\sqrt{\dfrac{1}{n}(x_{1}^2+x_{2}^2+...+x_{n}^2)})   
+RMS = √( (x₁² + x₂² + ... + xₙ²) / n )
 
 ```python
+import numpy as np
+import pandas as pd
+import grain_size_tools as gst
+
+# load the database
+version, metadata, db = gst.piezometers.load_piezometers_from_yaml(None)
+
 # Import the example dataset
-filepath = 'C:/Users/marco/Documents/GitHub/GrainSizeTools/grain_size_tools/DATA/data_set.txt'
-dataset = pd.read_csv(filepath, sep='\t')
+url = 'https://raw.githubusercontent.com/marcoalopez/GrainSizeTools/master/grain_size_tools/DATA/data_set.txt'
+dataset = pd.read_table(url)
 dataset['diameters'] = 2 * np.sqrt(dataset['Area'] / np.pi)  # estimate ECD
 
 # estimate the root mean squared
-rms = np.sqrt(np.mean(dataset['diameters']**2))  # note that in Python the exponent operator is ** (as in Fortran) not ^ (as in Matlab)
+rms = np.sqrt(np.mean(dataset['diameters']**2))  # note that in Python the exponent operator is **
 
-calc_diffstress(rms, phase='quartz', piezometer='Stipp_Tullis')
+gst.piezometers.calc_diffstress(db.quartz.__dict__['Stipp_Tullis'], grain_size=rms)
 ```
 
 ```
@@ -287,7 +224,7 @@ Alternatively, you can use (NumPy) arrays as input to estimate several different
 
 ```python
 ameans = np.array([12.23, 13.71, 12.76, 11.73, 12.69, 10.67])  # a set of average grain size values
-estimates = calc_diffstress(ameans, phase='olivine', piezometer='VanderWal_wet')
+estimates = gst.piezometers.calc_diffstress(db.olivine.__dict__['VanderWal_wet'], grain_size=ameans)
 estimates
 ```
 
@@ -301,40 +238,10 @@ Differential stresses in MPa
 array([167.41, 153.66, 162.16, 172.73, 162.83, 185.45])
 ```
 
-If the set of estimated values belongs to the same structural element (e.g. different areas of the same mylonite or different rocks within the same shear zone), you may want to estimate the average differential stress from all the data. The GrainSizeTools script provides a method named ``conf_interval()`` for this.
+If the set of estimated values belongs to the same structural element (e.g. different areas of the same mylonite or different rocks within the same shear zone), you may want to estimate the average differential stress from all the data. The GrainSizeTools package provides a method named ``gst.averages.conf_interval()`` for this.
 
 ```python
-def conf_interval(data, confidence=0.95):
-    """Estimate the confidence interval using the t-distribution with n-1
-    degrees of freedom t(n-1). This is the way to go when sample size is
-    small (n < 30) and the standard deviation cannot be estimated accurately.
-    For large datasets, the t-distribution approaches the normal distribution.
-
-    Parameters
-    ----------
-    data : array-like
-        the dataset
-
-    confidence : float between 0 and 1, optional
-        the confidence interval, default = 0.95
-
-    Assumptions
-    -----------
-    the data follows a normal or symmetric distrubution (when sample size
-    is large)
-
-    call_function(s)
-    ----------------
-    Scipy's t.interval
-
-    Returns
-    -------
-    the arithmetic mean, the error, and the limits of the confidence interval
-    """
-```
-
-```python
-conf_interval(estimates)
+gst.averages.conf_interval(estimates)
 ```
 
 ```

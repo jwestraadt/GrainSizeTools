@@ -16,10 +16,10 @@ TODO
 Let's first create a lognormal population using the function ``gen_lognorm_population()`` with a known shape and average to see how a population of grain sizes can be described statistically.
 
 ```python
-toy_dataset = averages.gen_lognorm_population(scale=np.log(20),   # geomean to 20
-                                              shape=np.log(1.5),  # lognormal shape =1.5
-                                              n=500,              # sample size = 500
-                                              seed=2)
+toy_dataset = gst.averages.gen_lognorm_population(scale=np.log(20),   # geomean to 20
+                                                  shape=np.log(1.5),  # lognormal shape =1.5
+                                                  n=500,              # sample size = 500
+                                                  seed=2)
 
 plt.hist(toy_dataset, bins='fd')
 ```
@@ -29,7 +29,7 @@ plt.hist(toy_dataset, bins='fd')
 We then use the ``summarize()`` function to describe the population statistically.
 
 ```python
-summarize(toy_dataset)
+gst.summarize(toy_dataset)
 ```
 
 ```reStructuredText

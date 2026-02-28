@@ -5,56 +5,68 @@
 
 In this section, we will learn
 
-- How to install Python using the Anaconda distribution.
-- How to install GrainSizeTools.
+- How to install GrainSizeTools using uv.
 - How to use Python through Jupyter Notebook or JupyterLab.
-- How to interact with the script and import data.
+- How to interact with the package and import data.
 
 > [!NOTE]
 Although this script does not require any prior knowledge of Python programming language, a general introduction to Python can be found at the following web link: https://marcoalopez.github.io/Python_course/
 
-## Step 1. Install Python for data science
+## Step 1. Install GrainSizeTools
 
-GrainSizeTools requires installing Python 3, the Python scientific libraries [NumPy](http://www.numpy.org/ ) [SciPy](http://www.scipy.org/ ), [Pandas](http://pandas.pydata.org ), [Matplotlib](http://matplotlib.org/ ), and JupyterLab. If you have no previous experience with Python, we recommend downloading and installing the Anaconda Python distribution as it contains all the necessary scientific packages (> 5 GB disc space). There are versions for Windows, MacOS and Linux.
+GrainSizeTools uses [uv](https://docs.astral.sh/uv/) for dependency and environment management. It requires Python 3.9 or higher.
 
-https://docs.anaconda.com/free/anaconda/install/
+**1a. Install uv**
 
-> [!TIP]
-> If you have limited disk space, there is a distribution called [Miniconda](https://docs.conda.io/projects/miniconda/en/latest/) which installs only the Python packages you need. If you prefer to go to this route, click [here](https://github.com/marcoalopez/Python_course/blob/main/notebooks/installing_Python.md) for detailed instructions.
+```bash
+# macOS / Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
 
-Once Anaconda is installed, launch the _Anaconda Navigator_ and you will see that you have installed various scientifically oriented Integrated Development Systems (IDEs), including **JupyterLab** and the **Jupyter Notebook**. Clicking on any of these will open the corresponding application in your default web browser. The GrainSizeTools documentation is written assuming that you will be working using Jupyter Notebooks.
+# Windows (PowerShell)
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
 
-![](https://raw.githubusercontent.com/marcoalopez/GrainSizeTools/master/imgs/anaconda_nav.jpg)  
-_The appearance of the Anaconda navigator. Framed in red and orange are JupyterLab (preferred option) and Jupyter Notebooks (both should be installed by default in Anaconda). JupyterLab is the next generation of the Classic Jupyter Notebook application interface, providing an easy-to-use environment focused on data science._
+Or via pip: `pip install uv`
+
+**1b. Clone the repository**
+
+```bash
+git clone https://github.com/marcoalopez/GrainSizeTools.git
+cd GrainSizeTools
+```
+
+**1c. Create the environment and install dependencies**
+
+```bash
+uv sync --all-groups
+```
+
+This creates a `.venv` virtual environment with Python 3.11 and installs all dependencies (numpy, scipy, matplotlib, pandas, pyyaml) along with JupyterLab.
+
+**1d. Launch JupyterLab**
+
+```bash
+uv run jupyter lab
+```
+
+The GrainSizeTools documentation is written assuming that you will be working using Jupyter Notebooks.
 
 > [!TIP]
 > **Using a dedicated application to work with Jupyter Notebooks**
 >
-> If you prefer to use a dedicated application instead of opening Jupyter Notebooks in your browser, there are several alternatives. Here we will mention two free alternatives:
+> If you prefer to use a dedicated application instead of opening Jupyter Notebooks in your browser, there are several alternatives:
 >
 > - **JupyterLab desktop**: https://github.com/jupyterlab/jupyterlab-desktop/releases
 >
-> This is a cross-platform desktop application for JupyterLab. It is the same application that opens in the browser but in an encapsulated application. You can find the user guide at the following link https://github.com/jupyterlab/jupyterlab-desktop/blob/master/user-guide.md. If you are a beginner, this is the easy road.
->
-> - **Visual Studio Code** (a.k.a. Vscode):  https://code.visualstudio.com/
->
-> This is a free code editor that can be used with various programming languages including Python and supports Jupyter Notebooks via extensions. As an advantage over vanilla JupyterLab, it has a handy variable browser. More detailed instructions on how to use Jupyter Notebooks in Vscode at the following link https://code.visualstudio.com/docs/datascience/jupyter-notebooks
->
-> Note that both applications require Python to be installed on your operating system, i.e. it does not exempt you from the step of installing Python using Anaconda or any other distribution.
+> - **Visual Studio Code** (a.k.a. Vscode):  https://code.visualstudio.com/ (supports Jupyter Notebooks via extensions)
 
 ## Step 2. Download GrainSizeTools
 
-Once Python is installed, the next step is to download GrainSizeTools. Click on the download link below (there is also a direct link on the GrainSizeTools website).
+The preferred method is cloning via git as shown in Step 1b above. Alternatively, you can download a release zip from:
 
 https://github.com/marcoalopez/GrainSizeTools/releases
 
-and download the latest version of the script by clicking on the zip file named ``grain_size_tools_v2024.03.20.zip`` (numbers may change!) as shown below
-
-TODO-> figure
-
-Unzip the file and save the GrainSizeTools folder to a location of your choice. The GrainSizeTools folder contains various Python files (.py), a folder named DATA with a CSV file inside, and various Jupyter Notebooks (.ipynb files) that are templates for doing different types of grain size data analysis.
-
-TODO -> figure
+Unzip the file and save the GrainSizeTools folder to a location of your choice. Then run `uv sync --all-groups` inside that folder to set up the environment.
 
 ## Step 3. Understanding Jupyter Notebooks
 
@@ -103,29 +115,35 @@ If you open an already edited notebook or template, using the collapsible sideba
 
 
 
-## Step 4: Understanding the script structure and the workflow
+## Step 4: Understanding the package structure and the workflow
 
-The script consists of seven Python files, listed below, which must be in the same directory.
+GrainSizeTools is a proper Python package located in the ``grain_size_tools/`` directory. It consists of the following submodules:
 
-- ``GrainSizeTools.py``: This file imports all the modules needed for the script to work.
-- ``averages.py``: This module contains a set of functions for calculating different types of averages and margins of error.
-- ``plot.py``: This module contains a set of functions for generating different types of ad hoc plots used by the script.
-- ``stereology.py``: This module contains a set of functions to approximate true grain size distributions from sectional measurements using stereological methods.
-- ``piezometric_database.py``: This file contains the database of piezometers the script uses.
-- ``template.py``: This file contains the default (Matplotlib) parameters used by the script to generate plots.
-- ``get.py``: This file contains the welcome message of the script.
+- ``__init__.py``: Package entry point that exposes `summarize`, `get_filepath`, and `function_list` at the top level and imports all submodules.
+- ``GrainSizeTools_script.py``: Contains the top-level functions `summarize()`, `get_filepath()`, and `function_list()`.
+- ``averages.py``: Functions for calculating different types of averages and confidence intervals.
+- ``plot.py``: Functions for generating distribution plots, q-q plots, area-weighted plots, and normalized plots.
+- ``stereology.py``: Functions to approximate true 3D grain size distributions from 2D sectional measurements (Saltykov and two-step methods).
+- ``piezometers.py``: Paleopiezometry functions, loading from `piezometric_database.yaml`.
+- ``template.py``: Default Matplotlib parameters used by the script to generate plots.
 
-``GrainSizeTools.py`` is the only executed Python file in the Jupyter Notebook templates, as it takes care of importing all the other modules of the script.
-
-TODO
-
-To access the methods of each module, write in a code cell the name of the module, followed by a dot and then the name of the method (``module.method()``), for example:
+To import the package and access any method, use:
 
 ```python
-averages.amean()
+import grain_size_tools as gst
+
+# top-level functions
+gst.summarize(data)
+gst.get_filepath()
+
+# submodule methods
+gst.averages.amean(data)
+gst.plot.distribution(data)
+gst.stereology.Saltykov(data)
+gst.piezometers.calc_diffstress(piezometer, grain_size=40.0)
 ```
 
-We will see the functionality of all the methods in more detail in the examples shown in this wiki. TODO
+We will see the functionality of all the methods in more detail in the examples shown in this wiki.
 
 #### The DATA folder
 
