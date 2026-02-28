@@ -38,7 +38,54 @@ See notes at https://github.com/marcoalopez/GrainSizeTools/releases/tag/v3.2.0
 
 ## Download
 
-https://github.com/marcoalopez/GrainSizeTools/releases  
+https://github.com/marcoalopez/GrainSizeTools/releases
+
+## Installation
+
+GrainSizeTools uses [uv](https://docs.astral.sh/uv/) for dependency and environment management.
+
+### 1. Install uv
+
+```bash
+# macOS / Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Windows (PowerShell)
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+Or via pip: `pip install uv`
+
+### 2. Clone the repository
+
+```bash
+git clone https://github.com/marcoalopez/GrainSizeTools.git
+cd GrainSizeTools
+```
+
+### 3. Create the environment and install dependencies
+
+```bash
+uv sync --all-groups
+```
+
+This creates a `.venv` virtual environment with Python 3.11 and installs all dependencies (numpy, scipy, matplotlib, pandas, pyyaml) along with JupyterLab for running notebooks.
+
+### 4. Launch JupyterLab
+
+```bash
+uv run jupyter lab
+```
+
+Then open any of the template notebooks in `grain_size_tools/` or the examples in `grain_size_tools/example_notebooks/`.
+
+### Running scripts directly
+
+Any Python script or command can be run inside the managed environment using `uv run`:
+
+```bash
+uv run python your_script.py
+```
 
 ## Documentation
 
