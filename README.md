@@ -76,9 +76,13 @@ Or via pip: `pip install uv`
 
 #### 2. Clone the repository
 
+> [!IMPORTANT]
+> The updated code lives on the `develop` branch of the jwestraadt fork. The `master` branch contains the original unmodified code. Make sure to check out the correct branch after cloning.
+
 ```bash
 git clone https://github.com/jwestraadt/GrainSizeTools.git
 cd GrainSizeTools
+git checkout develop
 ```
 
 #### 3. Create the environment and install dependencies
