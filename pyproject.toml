@@ -1,9 +1,12 @@
 [project]
-name = "GrainSizeTools"
-version = "3.2.0"
+name = "grainsizetools-jwestraadt"
+version = "3.2.1"
 description = "Tools for quantifying grain size populations and paleopiezometry from thin sections"
 authors = [
-    { name = "Marco A. Lopez-Sanchez" }
+    { name = "Johan Westraadt" },
+]
+maintainers = [
+    { name = "Johan Westraadt" },
 ]
 license = { text = "Apache-2.0" }
 readme = "README.md"
@@ -18,7 +21,11 @@ dependencies = [
 
 [project.urls]
 Homepage = "https://marcoalopez.github.io/GrainSizeTools/"
-Repository = "https://github.com/marcoalopez/GrainSizeTools"
+Repository = "https://github.com/jwestraadt/GrainSizeTools"
+"Original Project" = "https://github.com/marcoalopez/GrainSizeTools"
+
+[project.optional-dependencies]
+jupyter = ["jupyterlab>=4.0"]
 
 [dependency-groups]
 dev = [
